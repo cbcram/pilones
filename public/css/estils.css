@@ -1,0 +1,35 @@
+html {
+    height: 100%;
+    text-align: center;
+}
+body {
+    margin: 0;
+    padding: 0;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-size: 18px;
+    height: 100%;
+    text-align: center;
+    display: block;
+    background-color: #DBDFE1;
+}
+
+/* knob */
+
+#knobs {
+
+}
+
+.titolknob {
+    text-align: center;
+    font-weight: bold;
+}
+
+/* end knob */
+
+.taules {
+    font-size: 0.8em;
+}
+canvas{
+    width: 100% !important;
+    height: auto !important;
+}

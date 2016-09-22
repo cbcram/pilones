@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="/css/jqx.base.css" />
+    <link rel="stylesheet" type="text/css" href="/css/estils.css" />
+</head>
+
+<body>
+    <div id="graficestat">
+        <div id="knob"></div>
+        <span id="knobcaption" class="knobcaption">90</span>
+    </div>
+    <div id="div1"></div>
+</body>
+
+<script type="text/javascript" src="/js/jquery.js"></script>
+<script type="text/javascript" src="/js/jqxcore.js"></script>
+<script type="text/javascript" src="/js/jqxdraw.js"></script>
+<script type="text/javascript" src="/js/jqxknob.js"></script>
+<script type="text/javascript" src="/js/jqxinput.js"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var tplliures = 0;
+        $.ajax({
+            url: "http://pilones/h2o/total/status",
+            async: false,
+            success: function(result) {
+                var total = 0;
+                var lliures = 0;
+                $.map(result, function(elm) {
+                    total += +elm.total;
+                    lliures = (elm.estat === "lliure") ? elm.total : lliures;
+                    return elm;
+                });
+                tplliures = +(100 * +lliures / total);
+                $("#knobcaption").html(tplliures + "%");
+            }
+        });
+        $('#knob').jqxKnob({
+            value: tplliures,
+            allowValueChangeOnClick: false,
+            allowValueChangeOnDrag: false,
+            allowValueChangeOnMouseWheel: false,
+            min: 0,
+            max: 100,
+            startAngle: 270,
+            endAngle: 630,
+            width: '100%',
+            height: '100%',
+            snapToStep: true,
+            rotation: 'clockwise',
+            style: {
+                stroke: '#dfe3e9',
+                strokeWidth: 3,
+                fill: {
+                    color: '#fefefe',
+                    gradientType: "linear",
+                    gradientStops: [[0, 1], [50, 0.9], [100, 1]]
+                }
+            },
+            marks: {
+                colorRemaining: { color: 'green', border: 'grey' },
+                colorProgress: { color: '#00a4e1', border: '#00a4e1' },
+                type: 'line',
+                offset: '0%',
+                thickness: 3,
+                size: '0%',
+                majorSize: '9%'
+            },
+            labels: {
+                offset: '88%',
+                step: 10,
+                visible: false
+            },
+            progressBar: {
+                style: { fill: '#00a4e1', stroke: 'grey' },
+                size: '15%',
+                offset: '70%',
+                background: { fill: 'grey', stroke: 'grey' }
+            },
+            pointer: {
+                type: 'arrow',
+                style: {
+                    fill: '#00a4e1',
+                    stroke: 'grey'
+                }, size: '59%',
+                offset: '49%',
+                thickness: 20
+            }
+        });
+    });
+</script>
+</html>
