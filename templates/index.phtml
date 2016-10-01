@@ -6,8 +6,9 @@
     <link rel="stylesheet" href="css/reset.css">
     <link rel="stylesheet" href="css/datatables.min.css">
     <link rel="stylesheet" href="css/simple-grid.css">
-    <link rel="stylesheet" href="css/estils.css">
     <link rel="stylesheet" href="css/navbarmenu.css">
+    <link rel="stylesheet" href="css/estils.css">
+    <link rel="stylesheet" href="css/taules.css">
     <title>Pilones</title>
 </head>
 <body>
@@ -74,13 +75,13 @@
             <div class="col-12">
                 <div class="titolknob">Últims moviments</div>
                 <div id="lataula" class="taules">
-                    <table class="datatable" id="taula">
+                    <table class="datatable stripe" id="taula">
                         <thead>
                             <tr>
                                 <th>#</th>
                                 <th>Data/hora</th>
                                 <th>Valor</th>
-                                <th># sensor</th>
+                                <th>Sensor</th>
                                 <th>Missatge</th>
                                 <th>Tipus</th>
                             </tr>
@@ -91,15 +92,10 @@
                 </div>
             </div>
         </div>
-        <div id="divgrafica" class="row">
-            <div id="graficrow" class="col-12">
-                <div class="titolknob">Consums</div>
-                <canvas id="myChart" height="350" width="900"></canvas>
-            </div>
-        </div>
-        <div id="taula" class="row">
+        <div class="row">
             <div class="col-12">
-                Últims moviments: <span id="ultims"></span>
+                <div class="titolknob">Consum última setmana</div>
+                <canvas id="grafconsums" height="350" width="900"></canvas>
             </div>
         </div>
         <div id="taules" class="row">
@@ -169,159 +165,8 @@
 <script type="text/javascript" src="js/datatables.min.js"></script>
 <script type="text/javascript" src="xjs/chart.min.js"></script>
 <script type="text/javascript" src="js/Chart.bundle.min.js"></script>
+<script type="text/javascript" src="js/waindex.js"></script>
 <script type="text/javascript">
-    $(document).ready(function () {
-        // ****************
-        // knobs
-        var estat = "lliure";
-        var tph2o = 0;
-        var tpelec = 0;
-        var tpanomalia = 0;
-        var nanomalia =0;
-        var nsensors = 0;
 
-        // knob H2O
-        $.ajax({
-            url: window.location.href + "h2o/total/status",
-            async: false,
-            success: function(result) {
-                var total = 0;
-                var nestat = 0;
-                $.map(result, function(elm) {
-                    total += +elm.total;
-                    nestat = (elm.estat === estat) ? elm.total : nestat;
-                    nanomalia = (elm.estat === "anomalia") ? (nanomalia + elm.total) : nanomalia;
-                    return elm;
-                });
-                tph2o = +(100 * +nestat / total);
-                nsensors += total;
-            }
-        });
-        var colorestat = (estat == "lliure") ? "#aadeff" : ((estat == "ocupat") ? "#3333ff" : "#ff0000");
-        $(".knh2o").knob({
-            width: '100%',
-            height: '100%',
-            fgColor: colorestat,
-            readOnly: true,
-        });
-        $(".knh2o").val(tph2o).trigger('change');
-
-        // knob Elec
-        $.ajax({
-            url: window.location.href + "elec/total/status",
-            async: false,
-            success: function(result) {
-                var total = 0;
-                var nestat = 0;
-                $.map(result, function(elm) {
-                    total += +elm.total;
-                    nestat = (elm.estat === estat) ? elm.total : nestat;
-                    nanomalia = (elm.estat === "anomalia") ? (nanomalia + elm.total) : nanomalia;
-                    return elm;
-                });
-                tpelec = +(100 * +nestat / total);
-                nsensors += total;
-            }
-        });
-        var colorestat = (estat == "lliure") ? "#FFC200" : ((estat == "ocupat") ? "#FF8500" : "#FF0000");
-        $(".knelec").knob({
-            width: '100%',
-            height: '100%',
-            fgColor: colorestat,
-            readOnly: true,
-        });
-        $(".knelec").val(tpelec).trigger('change');
-
-        // knob Anomalia
-        tpanomalia = +(100 * +nanomalia / nsensors);
-        var colorestat = (estat == "anomalia") ? "#FFC200" : ((estat == "ocupat") ? "#FF8500" : "#FF0000");
-        $(".knanomalia").knob({
-            width: '100%',
-            height: '100%',
-            fgColor: colorestat,
-            readOnly: true,
-        });
-        $(".knanomalia").val(tpanomalia).trigger('change');
-
-        // ****************
-        // Taula 1
-        $('#taula').DataTable({
-            responsive: true,
-            autoWidth: false,
-            ajax: window.location.href + "sensors/regs",
-            columns: [
-                { "data": "idregh2o", "width": "5%" },
-                { "data": "datareg", "width": "25%" },
-                { "data": "valor", "width": "15%" },
-                { "data": "idsensorh2o", "width": "5%" },
-                { "data": "missatge", "width": "20%" },
-                { "data": "tipus", "width": "15%" }
-            ],
-            columnDefs: [
-                { responsivePriority: 1, targets: 0 },
-                { responsivePriority: 2, targets: -1 },
-                { responsivePriority: 3, targets: 1 },
-                { responsivePriority: 4, targets: 2 },
-                { responsivePriority: 5, targets: 3 },
-                { responsivePriority: 6, targets: 4 },
-                { responsivePriority: 7, targets: 5 }
-            ],
-        });
-
-        // ****************
-        // Chart
-        var ctx = $("#myChart");
-        var myChart = new Chart(ctx, {
-            type: 'bar',
-            responsive: true,
-            data: {
-                labels: ["dilluns", "dimarts", "dimecres", "dijous", "divendres", "dissabte","diumenge"],
-                datasets: [
-                    {
-                        label: 'H2O',
-                        data: [1200, 1900, 300, 500, 200, 300, 700],
-                        backgroundColor: '#aadeff',
-                        borderColor: '#aadeff',
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'Elec',
-                        data: [15, 21, 7, 3, 6, 9, 7],
-                        backgroundColor: '#FFC200',
-                        borderColor: '#FFC200',
-                        borderWidth: 1
-                    },
-                ]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: false,
-                        }
-                    }]
-                }
-            }
-        });
-        $('#ultims').html('hola');
-    });
-
-    /* menu */
-    $(window).scroll(function() {
-        if ($(this).scrollTop() > 25){  
-            $('header').addClass("sticky");
-            $('.descripcio').hide();
-        }
-        else{
-            if ($(window).width() >= 720 ){
-                $('header').removeClass("sticky");
-                $('.descripcio').show();
-            }
-            else {
-                $('header').removeClass("sticky");
-            }
-        }
-    });
-    /* end menu */
 </script>
 </html>

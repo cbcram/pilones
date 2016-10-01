@@ -1,0 +1,17 @@
+.taules {
+    font-size: 0.9em;
+}
+
+table.datatable thead th {
+  background-color: #BBB;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.botonera {
+  text-align: left;
+}
+
+.bototaula {
+  text-align: left;
+}
