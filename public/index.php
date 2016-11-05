@@ -17,6 +17,19 @@ session_start();
 $settings = require __DIR__ . '/../src/settings.php';
 $app = new \Slim\App($settings);
 
+// ******* Middleware *******
+// ******* TOP MENU *******
+$barra_menu = function ($request, $response, $next) {
+    $renderer = $this->get('renderer');
+    $response = $renderer->render($response, 'menu.php');
+    $response = $next($request, $response);
+    $response = $renderer->render($response, 'footer.php');
+    //$response->getBody()->write('AFTER');
+
+    return $response;
+};
+
+
 $container = $app->getContainer();
 $container['db'] = function ($c) {
     $db = $c['settings']['db'];

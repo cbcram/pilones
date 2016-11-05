@@ -10,7 +10,7 @@ $(document).ready(function () {
 
     // knob H2O
     $.ajax({
-        url: window.location.href + "h2o/total/status",
+        url: "h2o/total/status",
         async: false,
         success: function(result) {
             var total = 0;
@@ -36,7 +36,7 @@ $(document).ready(function () {
 
     // knob Elec
     $.ajax({
-        url: window.location.href + "elec/total/status",
+        url: "elec/total/status",
         async: false,
         success: function(result) {
             var total = 0;
@@ -76,9 +76,9 @@ $(document).ready(function () {
     $('#taula').DataTable({
         responsive: true,
         autoWidth: false,
-        ajax: window.location.href + "sensors/regs",
+        ajax: "sensors/regs",
         columns: [
-            { "data": "idregh2o", "width": "5%" },
+            { "data": "id", "width": "5%" },
             { "data": "datareg", "width": "25%" },
             { "data": "valor", "width": "15%" },
             { "data": "idsensorh2o", "width": "5%" },
@@ -95,13 +95,14 @@ $(document).ready(function () {
             { responsivePriority: 7, targets: 5 }
         ],
         display: "stripe",
+        "order": [[ 1, 'desc' ]]
     });
 
     // ****************
     // Chart de la BDD
     var dies, valors_elec, valors_h2o;
     $.ajax({
-        url: window.location.href + "sensors/acc/dia",
+        url: "sensors/acc/dia",
         async: false,
         success: function(result) {
             dies = result.map(function(obj) {
@@ -147,6 +148,21 @@ $(document).ready(function () {
                 }]
             }
         }
+    });
+
+    // MAPA
+
+    var mapplic = $('#mapplic').mapplic({
+        source: 'prova.json',
+        sidebar: true,
+        minimap: false,
+        markers: true,
+        fillcolor: false,
+        fullscreen: true,
+        maxscale: 3,
+        hovertip: true,
+        deeplinking: true,
+        developer: true
     });
 });
 

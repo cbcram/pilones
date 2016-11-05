@@ -10,65 +10,15 @@
     <link rel="stylesheet" type="text/css" href="css/navbarmenu.css">
     <link rel="stylesheet" type="text/css" href="css/estils.css">
     <link rel="stylesheet" type="text/css" href="css/taules.css">
+    <link rel="stylesheet" type="text/css" href="css/modal.css">
     <link rel="stylesheet" type="text/css" href="css/font-awesome/css/font-awesome.min.css">
     <title>Pilones</title>
 </head>
 <body>
-    <header>
-        <div class="elmenu">
-            <a href="/" class="linkmenu">
-                <div class="dinsmenu descripcio">home</div>
-                <div class="dinsmenu imatge"><img src="images/home-gris.svg" /></div>
-            </a>
-        </div>
-        <div class="elmenu">
-            <a href="" class="linkmenu">
-                <div class="dinsmenu descripcio">usuaris</div>
-                <div class="dinsmenu imatge"><img src="images/avatar-gris.svg" /></div>
-            </a>
-        </div>
-        <div class="elmenu">
-            <a href="" class="linkmenu">
-                <div class="dinsmenu descripcio">h2o</div>
-                <div class="dinsmenu imatge"><img src="images/tap-gris.svg" /></div>
-            </a>
-        </div>
-        <div class="elmenu">
-            <a href="" class="linkmenu">
-                <div class="dinsmenu descripcio">elec</div>
-                <div class="dinsmenu imatge"><img src="images/light-bulb-gris.svg" /></div>
-            </a>
-        </div>
-        <div class="elmenu">
-            <a href="" class="linkmenu">
-                <div class="dinsmenu descripcio">gràfs</div>
-                <div class="dinsmenu imatge"><img src="images/chart-gris.svg" /></div>
-            </a>
-        </div>
-        <div class="elmenu">
-            <a href="" class="linkmenu">
-                <div class="dinsmenu descripcio">fact</div>
-                <div class="dinsmenu imatge"><img src="images/euro-gris.svg" /></div>
-            </a>
-        </div>
-        <div class="elmenu">
-            <a href="" class="linkmenu">
-                <div class="dinsmenu descripcio">logout</div>
-                <div class="dinsmenu imatge"><img src="images/power-button-sign-gris.svg" /></div>
-            </a>
-        </div>
-    </header>
-    <div class="container">
+    <div id="container" class="container">
         <div id="divtaula" class="row">
             <div class="col-12">
-                <div class="titolknob">Llistat d'usuaris'</div>
-                <!--
-                <div class="botonera">
-                    <button id="afegir" class="bototaula">afegir</button>
-                    <button id="modificar" class="bototaula">modificar</button>
-                    <button id="eliminar" class="bototaula">eliminar</button>
-                </div>
-                -->
+                <div class="titolknob">Llistat d'usuaris</div>
                 <div id="lataula" class="taules">
                     <table class="datatable stripe" id="taula">
                         <thead>
@@ -77,6 +27,10 @@
                                 <th>Nom</th>
                                 <th>Cognoms</th>
                                 <th>DNI</th>
+                                <th>Entrada</th>
+                                <th>Sortida</th>
+                                <th>Consum H2O</th>
+                                <th>Consum Elec</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -86,6 +40,47 @@
             </div>
         </div>
     </div>
+    
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">Afegir usuari<span class="close">×</span></div>
+            <hr /><br />
+            <div class="modal-form">
+                <form id="afegirusuariform" data-id="" novalidate>
+                    <div class="input_container row nolinia">
+                        <div class="col-3">
+                            <label for="nom">Nom: <span class="required">*</span></label>
+                        </div>
+                        <div class="field_container">
+                            <input type="text" class="text" name="nom" id="nom" value="" required>
+                        </div>
+                    </div>
+                    <div class="input_container row nolinia">
+                        <div class="col-3">
+                            <label for="cognoms">Cognoms: <span class="required">*</span></label>
+                        </div>
+                        <div class="field_container">
+                            <input type="text" class="text" name="cognoms" id="cognoms" value="" required>
+                        </div>
+                    </div>
+                    <div class="input_container row nolinia">
+                        <div class="col-3">
+                            <label for="dni">DNI: <span class="required">*</span></label>
+                        </div>
+                        <div class="field_container">
+                            <input type="text" class="text" name="dni" id="dni" value="" required>
+                        </div>
+                    </div>
+                </form>
+                <br />
+                <button id="afegirusuariguardar">Guardar</button>
+                <button id="afegirusuaricancelar">Cancel·lar</button>
+            </div>
+        </div>
+    </div>
+    
 </body>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery.knob.min.js"></script>
@@ -94,6 +89,8 @@
 <script type="text/javascript" src="xjs/chart.min.js"></script>
 <script type="text/javascript" src="js/Chart.bundle.min.js"></script>
 <script type="text/javascript" src="js/wausuaris.js"></script>
+<script type="text/javascript" src="js/modal.js"></script>
+<script type="text/javascript" src="js/jquery.validate.min.js"></script>
 <script type="text/javascript">
 
 </script>

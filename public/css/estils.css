@@ -30,3 +30,18 @@ canvas{
     width: 100% !important;
     height: auto !important;
 }
+
+.nolinia {
+    border: 0px;
+}
+
+.linia {
+    border: solid 1px;
+}
+
+.error {
+    border: 0px solid;
+    background-color: #FFC8C8;
+    background-color: white;
+    color: red;
+}

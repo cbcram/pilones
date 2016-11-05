@@ -9,53 +9,11 @@
     <link rel="stylesheet" href="css/navbarmenu.css">
     <link rel="stylesheet" href="css/estils.css">
     <link rel="stylesheet" href="css/taules.css">
+    <link rel="stylesheet" type="text/css" href="mapplic/mapplic/mapplic.css">
+    <link rel="stylesheet" type="text/css" href="css/font-awesome/css/font-awesome.min.css">
     <title>Pilones</title>
 </head>
 <body>
-    <header>
-            <div class="elmenu">
-                <a href="/" class="linkmenu">
-                    <div class="dinsmenu descripcio">home</div>
-                    <div class="dinsmenu imatge"><img src="images/home-gris.svg" /></div>
-                </a>
-            </div>
-            <div class="elmenu">
-                <a href="usuaris" class="linkmenu">
-                    <div class="dinsmenu descripcio">usuaris</div>
-                    <div class="dinsmenu imatge"><img src="images/avatar-gris.svg" /></div>
-                </a>
-            </div>
-            <div class="elmenu">
-                <a href="" class="linkmenu">
-                    <div class="dinsmenu descripcio">h2o</div>
-                    <div class="dinsmenu imatge"><img src="images/tap-gris.svg" /></div>
-                </a>
-            </div>
-            <div class="elmenu">
-                <a href="" class="linkmenu">
-                    <div class="dinsmenu descripcio">elec</div>
-                    <div class="dinsmenu imatge"><img src="images/light-bulb-gris.svg" /></div>
-                </a>
-            </div>
-            <div class="elmenu">
-                <a href="" class="linkmenu">
-                    <div class="dinsmenu descripcio">gràfs</div>
-                    <div class="dinsmenu imatge"><img src="images/chart-gris.svg" /></div>
-                </a>
-            </div>
-            <div class="elmenu">
-                <a href="" class="linkmenu">
-                    <div class="dinsmenu descripcio">fact</div>
-                    <div class="dinsmenu imatge"><img src="images/euro-gris.svg" /></div>
-                </a>
-            </div>
-            <div class="elmenu">
-                <a href="" class="linkmenu">
-                    <div class="dinsmenu descripcio">logout</div>
-                    <div class="dinsmenu imatge"><img src="images/power-button-sign-gris.svg" /></div>
-                </a>
-            </div>
-    </header>
     <div class="container">
         <div id="knobs" class="row">
             <div class="col-2 col-4-sm">
@@ -98,9 +56,11 @@
                 <canvas id="grafconsums" height="350" width="900"></canvas>
             </div>
         </div>
-        <div id="taules" class="row">
+        <div id="mapa" class="row">
             <div class="col-12">
-                <p>Una taula 4</p>
+                <div class="titolknob">Mapa de pilones</div>
+                <br />
+                <div id="mapplic"></div>
             </div>
         </div>
         <div id="taules" class="row">
@@ -108,57 +68,8 @@
                 <p>Una taula 5</p>
             </div>
         </div>
-        <div id="taules" class="row">
-            <div class="col-12">
-                <p>Una taula 6</p>
-            </div>
-        </div>
-        <div id="taules" class="row">
-            <div class="col-12">
-                <p>Una taula 7</p>
-            </div>
-        </div>
-        <div id="taules" class="row">
-            <div class="col-12">
-                <p>Una taula 8</p>
-            </div>
-        </div>
-        <div id="taules" class="row">
-            <div class="col-12">
-                <p>Una taula 9</p>
-            </div>
-        </div>
-        <div id="taules" class="row">
-            <div class="col-12">
-                <p>Una taula 10</p>
-            </div>
-        </div>
-        <div id="taules" class="row">
-            <div class="col-12">
-                <p>Una taula 11</p>
-            </div>
-        </div>
-        <div id="taules" class="row">
-            <div class="col-12">
-                <p>Una taula 12</p>
-            </div>
-        </div>
-        <div id="taules" class="row">
-            <div class="col-12">
-                <p>Una taula 13</p>
-            </div>
-        </div>
-        <div id="taules" class="row">
-            <div class="col-12">
-                <p>Una taula 14</p>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-12">
-                <p>Una taula 14</p>
-            </div>
-        </div>
     </div>
+
 </body>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery.knob.min.js"></script>
@@ -166,6 +77,9 @@
 <script type="text/javascript" src="xjs/chart.min.js"></script>
 <script type="text/javascript" src="js/Chart.bundle.min.js"></script>
 <script type="text/javascript" src="js/waindex.js"></script>
+<script type="text/javascript" src="mapplic/js/hammer.min.js"></script>
+<script type="text/javascript" src="mapplic/js/jquery.mousewheel.js"></script>
+<script type="text/javascript" src="mapplic/mapplic/mapplic.js"></script>
 <script type="text/javascript">
 
 </script>

@@ -1,17 +1,18 @@
 $(document).ready(function () {
-    console.log("http://pilones/usuari/llista");
     // ****************
     // Llistat Usuaris
     var taulausuaris = $('#taula').DataTable({
         dom: 'Bfrtip',
         responsive: true,
         autoWidth: false,
-        ajax: "http://pilones/usuari/llista",
+        ajax: "usuaris/actius",
         columns: [
-            { "data": "idusuari", "width": "5%" },
-            { "data": "nom", "width": "25%" },
+            { "data": "id", "width": "5%" },
+            { "data": "nom", "width": "15%" },
             { "data": "cognoms", "width": "15%" },
-            { "data": "dni", "width": "5%" }
+            { "data": "dni", "width": "5%" },
+            { "data": "dataini", "width": "10%" },
+            { "data": "datafi", "width": "10%" }
         ],
         columnDefs: [
             { responsivePriority: 1, targets: 1 },
@@ -22,25 +23,44 @@ $(document).ready(function () {
         select: true,
         buttons: [
             {
-                text: '<i class="fa fa-user-plus"></i>',
-                action: function() {
-                    alert('afegir usuari');
-                },
-                titleAttr: 'afegir usuari'
+                text: '<i id="btafegirusuari" class="fa fa-user-plus"></i>',
+                titleAttr: 'afegir usuari',
+                action: function(event) {
+                    $('#myModal').show();
+                    event.stopPropagation();
+                    $('#nom').focus();
+                }
             },
             {
                 text: '<i class="fa fa-user-md"></i>',
+                titleAttr: 'modificar usuari',
                 action: function() {
-                    alert('modificar usuari');
-                },
-                titleAttr: 'modificar usuari'
+                    console.log('modificar');
+                    var a = taulausuaris.columns().data();
+                    console.log(a);
+                }
             },
             {
                 text: '<i class="fa fa-user-times"></i>',
+                titleAttr: 'eliminar usuari/s',
                 action: function() {
-                    alert('eliminar usuari/s');
-                },
-                titleAttr: 'eliminar usuari/s'
+                    if(taulausuaris.rows({ selected: true }).count()>=1) {
+                        var idusuari = taulausuaris.rows({ selected: true }).data().toArray()[0]['id'];
+                        $.ajax({
+                            url: "usuari/" + idusuari,
+                            async: false,
+                            type: 'delete',
+                            success: function(result) {
+                                taulausuaris.ajax.reload();
+                                console.log(result);
+                            }
+                        });
+                    }
+                    else {
+                        if(taulausuaris.rows({ selected: true }).count()==0) alert("selecciona un usuari");
+                        //if(taulausuaris.rows({ selected: true }).count()>1) alert("selecciona només un usuari");
+                    }
+                }
             },
             {
                 extend:    'copyHtml5',
@@ -63,6 +83,54 @@ $(document).ready(function () {
                 titleAttr: 'PDF'
             },
         ],
+    });
+
+    $.validator.setDefaults({
+        success: 'valid',
+        rules: {
+            nom: {
+                required: true
+            },
+            cognoms: {
+                required: true
+            },
+            dni: {
+                required: true,
+                min:      10000000,
+                max:      99999999
+            },
+        },
+        errorPlacement: function(error, element){
+            error.insertAfter(element);
+        },
+        highlight: function(element){
+            //$(element).parent('.field_container').removeClass('valid').addClass('error');
+        },
+        unhighlight: function(element){
+            //$(element).parent('.field_container').addClass('valid').removeClass('error');
+        }
+    });
+
+    var afegirusuariform = $('#afegirusuariform');
+    afegirusuariform.validate();
+
+    $('#afegirusuariguardar').on('click', function() {
+        if (afegirusuariform.valid() == true){
+            var form_data = $('#afegirusuariform').serialize();
+            $.ajax({
+                url: "usuari",
+                async: false,
+                type: 'post',
+                data: form_data,
+                success: function(result) {
+                    taulausuaris.ajax.reload();
+                    if(result!=true) {
+                        alert(result[0].errorInfo[2]);
+                    }
+                    //console.log(result[1]);
+                }
+            });
+        }
     });
     
 });

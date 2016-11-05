@@ -23,5 +23,11 @@ return [
             'pass' => 'root',
             'dbname' => 'pilones'
         ],
+        /*'db' => [
+            'host' => '62.149.150.52',
+            'user' => 'Sql130133',
+            'pass' => 'da19d62e',
+            'dbname' => 'Sql130133_2'
+        ],*/
     ],
 ];
