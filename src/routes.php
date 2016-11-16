@@ -187,13 +187,16 @@ $app->get('/sensors/acc/dia[/{mindia}]', function ($request, $response, $args) {
 
 
 // ******* USUARIS *******
-// Llistat usuaris
+// Llistat de tots els usuaris
 $app->get('/usuari', function ($request, $response, $args) {
     // Sample log message
     $this->logger->info("Slim-Skeleton '/usuari' route");
 
     // Query database
-    $strqry ="SELECT id,nom,cognoms,dni FROM usuaris";
+    $strqry = "SELECT u.id, u.nom, u.cognoms, u.dni, MAX(r.dataini) AS dataini, MAX(r.datafi) AS datafi " .
+              "FROM usuaris AS u " .
+              "LEFT JOIN reserves AS r ON u.id = r.idusuari " .
+              "GROUP BY u.id, u.nom";
     
     $qry = $this->db->query($strqry);
     $data = array('data' => $qry->fetchAll());
@@ -205,7 +208,7 @@ $app->get('/usuari', function ($request, $response, $args) {
 
 });
 
-// Llistat usuaris
+// Llistat amb reserva actual
 $app->get('/usuaris/actius', function ($request, $response, $args) {
     // Sample log message
     $this->logger->info("Slim-Skeleton '/usuaris/actius' route");
@@ -216,11 +219,54 @@ $app->get('/usuaris/actius', function ($request, $response, $args) {
              "INNER JOIN sensorsh2o ON sensorsh2o.id = reserves.idsensorh2o " .
              "INNER JOIN sensorselec ON sensorselec.id = reserves.idsensorelec " .
              "WHERE (NOW() BETWEEN dataini AND datafi)";
-
-    $this->logger->info($strqry);
     $qry = $this->db->query($strqry);
     $data = array('data' => $qry->fetchAll());
-    $qryresult = $qry->fetchAll();
+    
+    // Return json
+    $response = $response->withJson($data,200);
+    return $response;
+
+});
+
+// Llistat reserves, usuari i consums
+$app->get('/usuaris/reserva', function ($request, $response, $args) {
+    // Sample log message
+    $this->logger->info("Slim-Skeleton '/usuaris/reserva' route");
+
+    // Query database
+    $strqryh2o = "SELECT DISTINCT r.id, r.dataini, r.datafi, rh.idsensorh2o AS idsensorh2o, SUM(rh.valor) AS h2o, 'h2o' AS tipus, u.nom, u.cognoms, u.dni " .
+                 "FROM reserves AS r " .
+                 "LEFT JOIN registresh2o AS rh ON rh.idsensorh2o = r.idsensorh2o " .
+                 "LEFT JOIN usuaris AS u ON r.idusuari = u.id " .
+                 "WHERE rh.datareg BETWEEN r.dataini AND r.datafi " .
+                 "GROUP BY r.id " .
+                 "ORDER BY u.nom ASC, r.id DESC";
+    $qryh2o = $this->db->query($strqryh2o);
+    $datah2o = $qryh2o->fetchAll();
+    
+    $strqryelec = "SELECT DISTINCT r.id, r.dataini, r.datafi, re.idsensorelec AS idsendorelec, SUM(re.valor) AS elec, 'elec' AS tipus, u.nom, u.cognoms, u.dni " .
+                  "FROM reserves AS r " .
+                  "LEFT JOIN registreselec AS re ON re.idsensorelec = r.idsensorelec " .
+                  "LEFT JOIN usuaris AS u ON r.idusuari = u.id " .
+                  "WHERE re.datareg BETWEEN r.dataini AND r.datafi " .
+                  "GROUP BY r.id " .
+                  "ORDER BY u.nom ASC, r.id DESC";
+    $qryelec = $this->db->query($strqryelec);
+    $dataelec = $qryelec->fetchAll();
+
+    foreach($datah2o as $kh => $vh) {
+        foreach($dataelec as $ke => $ve) {
+            if($vh['id'] === $ve['id']) {
+                $datah2o[$kh]['idsendorelec'] = $ve['idsendorelec'];
+                $datah2o[$kh]['elec'] = $ve['elec'];
+            } else {
+                $datah2o[$kh]['idsendorelec'] = 0;
+                $datah2o[$kh]['elec'] = 0;
+            }
+        }
+    }
+
+    $data = array('data' => $datah2o);
     
     // Return json
     $response = $response->withJson($data,200);
@@ -240,7 +286,40 @@ $app->post('/usuari[/{id}]', function ($request, $response, $args) {
     $dni = $pars['dni'];
 
     // Afegir a la bdd
-    $strqry ="INSERT INTO usuaris (id, idreserva, nom, cognoms, dni) VALUES (NULL, 0, '" . $nom . "', '" . $cognoms . "', '". $dni . "')";
+    $strqry ="INSERT INTO usuaris (id, nom, cognoms, dni) VALUES (NULL, '" . $nom . "', '" . $cognoms . "', '". $dni . "')";
+    $this->logger->info($strqry);
+    $qry = $this->db->prepare($strqry);
+    $exqry = array();
+    try {
+        $qryrst = $qry->execute();
+        //array_push($exqry,$strqry);
+        //array_push($exqry,$qryrst);
+        $exqry = $qryrst;
+    } catch (Exception $e) {
+        array_push($exqry,$e);
+        array_push($exqry,$strqry);
+    }
+
+    $response = $response->withJson($exqry,200);
+    return $response;
+
+});
+
+// Afegir usuari
+$app->put('/usuari[/{id}]', function ($request, $response, $args) {
+    // Sample log message
+    $this->logger->info("Slim-Skeleton '/usuari/{id}:PUT' route");
+
+    // Extreure dades del Request
+    $pars = $request->getParsedBody();
+    $id = $pars['id'];
+    $nom = $pars['nom'];
+    $cognoms = $pars['cognoms'];
+    $dni = $pars['dni'];
+
+    // Modificar a la bdd
+    $strqry ="UPDATE usuaris SET nom='" . $nom . "', cognoms='" . $cognoms . "', dni='" . $dni . "' WHERE id=" . $id;
+    $this->logger->info($strqry);
     $qry = $this->db->prepare($strqry);
     $exqry = array();
     try {
@@ -298,6 +377,17 @@ $app->get('/usuaris', function ($request, $response, $args) {
     
 })->add($barra_menu);
 
+// Facturacio
+$app->get('/facturacio', function ($request, $response, $args) {
+    // Sample log message
+    $this->logger->info("Slim-Skeleton '/facturacio' route");
+
+    // Render index view
+    return $this->renderer->render($response, 'facturacio.phtml', $args);
+    
+})->add($barra_menu);
+
+
 // H2O
 $app->get('/h2o', function ($request, $response, $args) {
     // Sample log message
@@ -306,7 +396,7 @@ $app->get('/h2o', function ($request, $response, $args) {
     // Render index view
     return $this->renderer->render($response, 'h2o.phtml', $args);
     
-});
+})->add($barra_menu);;
 
 // ******* FI API *******
 

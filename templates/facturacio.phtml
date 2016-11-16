@@ -18,7 +18,7 @@
     <div id="container" class="container">
         <div id="divtaula" class="row">
             <div class="col-12">
-                <div class="titolknob">Llistat d'usuaris</div>
+                <div class="titolknob">Llistat de reservers per usuari</div>
                 <div id="lataula" class="taules">
                     <table class="datatable stripe" id="taula">
                         <thead>
@@ -29,6 +29,8 @@
                                 <th>DNI</th>
                                 <th>Entrada</th>
                                 <th>Sortida</th>
+                                <th>Consum H2O</th>
+                                <th>Consum Elec</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -43,12 +45,11 @@
     <div id="myModal" class="modal">
         <!-- Modal content -->
         <div class="modal-content">
-            <div id="titolmodalafegir" class="modal-header">Afegir usuari<span class="close">×</span></div>
+            <div class="modal-header">Afegir usuari<span class="close">×</span></div>
             <hr /><br />
             <div class="modal-form">
                 <form id="afegirusuariform" data-id="" novalidate>
                     <div class="input_container row nolinia">
-                        <input type="hidden" class="text" name="id" id="id" value="">
                         <div class="col-3">
                             <label for="nom">Nom: <span class="required">*</span></label>
                         </div>
@@ -87,7 +88,7 @@
 <script type="text/javascript" src="xxxjs/buttons.html5.min.js"></script>
 <script type="text/javascript" src="xjs/chart.min.js"></script>
 <script type="text/javascript" src="js/Chart.bundle.min.js"></script>
-<script type="text/javascript" src="js/wausuaris.js"></script>
+<script type="text/javascript" src="js/wafacturacio.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/jquery.validate.min.js"></script>
 <script type="text/javascript">

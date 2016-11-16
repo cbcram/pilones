@@ -1,0 +1,72 @@
+SELECT *
+FROM reserves INNER JOIN usuaris ON (reserves.idusuari = usuaris.id)
+INNER JOIN sensorsh2o ON sensorsh2o.id = reserves.idsensorh2o
+INNER JOIN sensorselec ON sensorselec.id = reserves.idsensorelec
+WHERE (NOW() BETWEEN dataini AND datafi)
+
+SELECT *
+FROM reserves AS r
+LEFT JOIN usuaris AS u ON (r.idusuari = u.id)
+LEFT JOIN sensorsh2o AS sh ON sh.id = r.idsensorh2o
+LEFT JOIN sensorselec AS se ON se.id = r.idsensorelec
+WHERE (NOW() BETWEEN dataini AND datafi)
+
+SELECT r.id AS idreserva, u.id AS idusuari, u.nom, sh.id AS idsensorh2o, se.id AS idsensorelec, r.dataini, r.datafi, rh.valor AS valorh2o
+FROM reserves AS r
+LEFT JOIN usuaris AS u ON (r.idusuari = u.id)
+LEFT JOIN sensorsh2o AS sh ON sh.id = r.idsensorh2o
+LEFT JOIN sensorselec AS se ON se.id = r.idsensorelec
+LEFT JOIN registresh2o AS rh ON rh.idsensorh2o = sh.id
+WHERE (NOW() BETWEEN r.dataini AND r.datafi)
+
+SELECT DISTINCT r.id, r.dataini, r.datafi, rh.idsensorh2o, rh.datareg, rh.valor
+FROM reserves AS r
+LEFT JOIN registresh2o AS rh ON rh.idsensorh2o = r.idsensorh2o
+WHERE rh.datareg BETWEEN r.dataini and r.datafi
+
+*******************************************************************************
+SELECT DISTINCT r.id, r.dataini, r.datafi, rh.idsensorh2o, SUM(rh.valor)
+FROM reserves AS r
+LEFT JOIN registresh2o AS rh ON rh.idsensorh2o = r.idsensorh2o
+WHERE rh.datareg BETWEEN r.dataini AND r.datafi
+GROUP BY r.id
+*******************************************************************************
+SELECT DISTINCT r.id, r.dataini, r.datafi, re.idsensorelec, SUM(re.valor)
+FROM reserves AS r
+LEFT JOIN registreselec AS re ON re.idsensorelec = r.idsensorelec
+WHERE re.datareg BETWEEN r.dataini AND r.datafi
+GROUP BY r.id
+*******************************************************************************
+SELECT DISTINCT r.id, r.dataini, r.datafi, rh.idsensorh2o AS idsensor, SUM(rh.valor), "h2o" AS tipus
+FROM reserves AS r
+LEFT JOIN registresh2o AS rh ON rh.idsensorh2o = r.idsensorh2o
+WHERE rh.datareg BETWEEN r.dataini AND r.datafi
+GROUP BY r.id
+UNION
+SELECT DISTINCT r.id, r.dataini, r.datafi, re.idsensorelec AS idsendor, SUM(re.valor), "elec" AS tipus
+FROM reserves AS r
+LEFT JOIN registreselec AS re ON re.idsensorelec = r.idsensorelec
+WHERE re.datareg BETWEEN r.dataini AND r.datafi
+GROUP BY r.id
+*******************************************************************************
+SELECT DISTINCT r.id, r.dataini, r.datafi, rh.idsensorh2o AS idsensor, SUM(rh.valor) AS h2o, 'h2o' AS tipus, u.nom
+FROM reserves AS r
+LEFT JOIN registresh2o AS rh ON rh.idsensorh2o = r.idsensorh2o
+LEFT JOIN usuaris AS u ON r.idusuari = u.id
+WHERE rh.datareg BETWEEN r.dataini AND r.datafi
+GROUP BY r.id
+ORDER BY u.nom ASC, r.id DESC
+*******************************************************************************
+SELECT DISTINCT r.id, r.dataini, r.datafi, re.idsensorelec AS idsendor, SUM(re.valor) AS elec, 'elec' AS tipus
+FROM reserves AS r
+LEFT JOIN registreselec AS re ON re.idsensorelec = r.idsensorelec
+LEFT JOIN usuaris AS u ON r.idusuari = u.id
+WHERE re.datareg BETWEEN r.dataini AND r.datafi
+GROUP BY r.id
+ORDER BY u.nom ASC, r.id DESC
+*******************************************************************************
+
+SELECT u.id, u.nom, u.cognoms, u.dni, MAX(r.dataini), MAX(r.datafi)
+FROM usuaris AS u
+LEFT JOIN reserves AS r ON u.id = r.idusuari
+GROUP BY u.id, u.nom

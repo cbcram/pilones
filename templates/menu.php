@@ -12,7 +12,7 @@
         </a>
     </div>
     <div class="elmenu">
-        <a href="" class="linkmenu">
+        <a href="h2o" class="linkmenu">
             <div class="dinsmenu descripcio">h2o</div>
             <div class="dinsmenu imatge"><img src="images/tap-gris.svg" /></div>
         </a>
@@ -30,7 +30,7 @@
         </a>
     </div>
     <div class="elmenu">
-        <a href="" class="linkmenu">
+        <a href="facturacio" class="linkmenu">
             <div class="dinsmenu descripcio">facturació</div>
             <div class="dinsmenu imatge"><img src="images/euro-gris.svg" /></div>
         </a>
