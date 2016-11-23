@@ -65,8 +65,26 @@ WHERE re.datareg BETWEEN r.dataini AND r.datafi
 GROUP BY r.id
 ORDER BY u.nom ASC, r.id DESC
 *******************************************************************************
-
 SELECT u.id, u.nom, u.cognoms, u.dni, MAX(r.dataini), MAX(r.datafi)
 FROM usuaris AS u
 LEFT JOIN reserves AS r ON u.id = r.idusuari
 GROUP BY u.id, u.nom
+*******************************************************************************
+SELECT r.id,r.dataini,r.datafi,SUM(rh.valor) AS h2o
+FROM reserves AS r
+LEFT JOIN registresh2o AS rh ON r.idsensorh2o=rh.idsensorh2o
+WHERE (r.idusuari=2)
+AND (rh.datareg BETWEEN r.dataini AND r.datafi)
+GROUP BY r.id
+ORDER BY r.dataini DESC
+LIMIT 1
+*******************************************************************************
+SELECT r.id,r.dataini,r.datafi,SUM(re.valor) AS elec
+FROM reserves AS r
+LEFT JOIN registreselec AS re ON r.idsensorelec=re.idsensorelec
+WHERE (r.idusuari=2)
+AND (re.datareg BETWEEN r.dataini AND r.datafi)
+GROUP BY r.id
+ORDER BY r.dataini DESC
+LIMIT 1
+*******************************************************************************

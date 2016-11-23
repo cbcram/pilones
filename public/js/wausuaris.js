@@ -5,6 +5,7 @@ $(document).ready(function () {
         dom: 'Bfrtip',
         responsive: true,
         autoWidth: false,
+        pageLength: 20,
         ajax: "usuari",
         columns: [
             { "data": "id", "width": "5%" },
@@ -22,33 +23,51 @@ $(document).ready(function () {
         ],
         select: true,
         buttons: [
+            // boto afegir
             {
                 text: '<i id="btafegirusuari" class="fa fa-user-plus"></i>',
-                titleAttr: 'afegir usuari',
+                titleAttr: 'nou usuari',
                 action: function(event) {
+                    $('#afegirusuariguardar').removeClass('modificar');
+                    $('#afegirusuariguardar').removeClass('mostrar');
+                    $('#afegirusuariguardar').addClass('nou');
+                    $('#afegirusuariguardar').show();
                     $('#myModal').show();
+                    $('#titolmodalafegir').html('Nou usuari');
+                    $('#afegirusuariform :input').val('').prop('disabled', false);
+                    $('.nomodif').prop('disabled',true);
                     event.stopPropagation();
                     $('#nom').focus();
                 }
             },
+            // boto modificar
             {
                 text: '<i class="fa fa-user-md"></i>',
-                titleAttr: 'modificar usuari',
+                titleAttr: 'editar usuari',
                 action: function(event) {
                     var usuari = taulausuaris.rows('.selected').data()[0];
                     if(usuari) {
+                        $('#afegirusuariguardar').removeClass('nou');
+                        $('#afegirusuariguardar').removeClass('mostrar');
+                        $('#afegirusuariguardar').addClass('editar');
+                        $('#afegirusuariguardar').show();
                         $('#myModal').show();
-                        $('#titolmodalafegir').html('Modificar usuari');
+                        $('#titolmodalafegir').html('Editar usuari');
                         $('#id').val(usuari['id']);
                         $('#nom').val(usuari['nom']);
                         $('#cognoms').val(usuari['cognoms']);
                         $('#dni').val(usuari['dni']);
+                        $('#dataini').val(usuari['dataini']);
+                        $('#datafi').val(usuari['datafi']);
+                        $('#afegirusuariform :input').not('.nomodif').prop('disabled', false);
                         event.stopPropagation();
                         $('#nom').focus();
-                        $('#afegirusuariguardar').toggleClass('modificar');
+                    } else {
+                        alert('cal seleccionar un usuari');
                     }
                 }
             },
+            // boto eliminar
             {
                 text: '<i class="fa fa-user-times"></i>',
                 titleAttr: 'eliminar usuari/s',
@@ -67,6 +86,43 @@ $(document).ready(function () {
                     else {
                         if(taulausuaris.rows({ selected: true }).count()==0) alert("selecciona un usuari");
                         //if(taulausuaris.rows({ selected: true }).count()>1) alert("selecciona només un usuari");
+                    }
+                }
+            },
+            // boto mostrar
+            {
+                text: '<i class="fa fa-list-alt"></i>',
+                titleAttr: 'mostrar usuari',
+                action: function(event) {
+                    var usuari = taulausuaris.rows('.selected').data()[0];
+                    if(usuari) {
+                        $('#afegirusuariguardar').removeClass('nou');
+                        $('#afegirusuariguardar').removeClass('editar');
+                        $('#afegirusuariguardar').addClass('mostrar');
+                        $('#afegirusuariguardar').hide();
+                        $('#myModal').show();
+                        $('#titolmodalafegir').html('Mostrar usuari');
+                        $('#id').val(usuari['id']);
+                        $('#nom').val(usuari['nom']).prop('disabled', true);
+                        $('#cognoms').val(usuari['cognoms']).prop('disabled', true);
+                        $('#dni').val(usuari['dni']).prop('disabled', true);
+                        $('#dataini').val(usuari['dataini']).prop('disabled', true);
+                        $('#datafi').val(usuari['datafi']).prop('disabled', true);
+                        $('#sensorh2o').val(usuari['sensorh2o']).prop('disabled', true);
+                        $('#sensorelec').val(usuari['sensorelec']).prop('disabled', true);
+                        $.ajax({
+                            url: "/usuari/consum/" + usuari['id'],
+                            async: false,
+                            type: 'get',
+                            success: function(result) {
+                                $('#h2o').val(result['data'][0]['h2o']);
+                                $('#elec').val(result['data'][0]['elec']);
+                            }
+                        });
+                        event.stopPropagation();
+                        $('#nom').focus();
+                    } else {
+                        alert('cal seleccionar un usuari');
                     }
                 }
             },
@@ -120,12 +176,20 @@ $(document).ready(function () {
     });
 
     var afegirusuariform = $('#afegirusuariform');
+    $.validator.addMethod(
+        'datahora',
+        function(){
+        },
+        'Format de data incorrecte. AAAA-MM-DD HH:MM'
+    );
     afegirusuariform.validate();
 
+    // Enviar formulari afegir(post)/modificar(put)
     $('#afegirusuariguardar').on('click', function() {
         if (afegirusuariform.valid() == true){
             var form_data = $('#afegirusuariform').serialize();
             var metode = $('#afegirusuariguardar').hasClass('modificar') ? 'put' : 'post';
+            //afegir usuari a la bdd
             $.ajax({
                 url: "usuari",
                 async: false,
@@ -136,10 +200,66 @@ $(document).ready(function () {
                     if(result!=true) {
                         alert(result[0].errorInfo[2]);
                     }
+                    console.log('afegir usuari: ' + result);
                 }
             });
-            $('#afegirusuariguardar').removeClass('modificar');
+            if((moment($('#dataini').val()).isValid()) && (moment($('#datafi').val()).isValid())) {
+                alert('dataini ok');
+            } else {
+                alert('dataini NOK');
+            }
         }
+    });
+
+    // Omplir listbox modals d'edicio/modificacio d'usuaris
+    $.ajax({
+        url: "/sensorsh2o",
+        async: false,
+        type: 'get',
+        success: function(result) {
+            $.each(result, function(propietat,valor) {
+                if(valor.estat === "lliure") {
+                    $("#sensorh2o").append($("<option></option>").attr("value",valor.id).text(valor.descripcio));
+                } else {
+                    $("#sensorh2o").append($("<option disabled></option>").attr("value",valor.id).text(valor.descripcio).prop('disabled', true));
+                }
+            });
+        }
+    });
+    $.ajax({
+        url: "/sensorselec",
+        async: false,
+        type: 'get',
+        success: function(result) {
+            $.each(result, function(propietat,valor) {
+                if(valor.estat === "lliure") {
+                    $("#sensorelec").append($("<option></option>").attr("value",valor.id).text(valor.descripcio));
+                } else {
+                    $("#sensorelec").append($("<option></option>").attr("value",valor.id).text(valor.descripcio).prop('disabled', true));
+                }
+            });
+        }
+    });
+
+
+
+
+    // Datepicker
+    $('#dataini').dateRangePicker({
+        autoClose: true,
+        singleDate: true,
+        time: {
+            enabled: true
+        },
+        format: 'YYYY-MM-DD HH:mm',
+    });
+    $('#datafi').dateRangePicker({
+        autoClose: true,
+        singleDate: true,
+        time: {
+            enabled: true
+        },
+        format: 'YYYY-MM-DD HH:mm',
     });
     
 });

@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="css/taules.css">
     <link rel="stylesheet" type="text/css" href="css/modal.css">
     <link rel="stylesheet" type="text/css" href="css/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="css/daterangepicker.min.css">
     <title>Pilones</title>
 </head>
 <body>
@@ -43,7 +44,7 @@
     <div id="myModal" class="modal">
         <!-- Modal content -->
         <div class="modal-content">
-            <div id="titolmodalafegir" class="modal-header">Afegir usuari<span class="close">×</span></div>
+            <div id="titolmodalafegir" class="modal-header nou">Nou Usuari<span class="close">×</span></div>
             <hr /><br />
             <div class="modal-form">
                 <form id="afegirusuariform" data-id="" novalidate>
@@ -53,7 +54,7 @@
                             <label for="nom">Nom: <span class="required">*</span></label>
                         </div>
                         <div class="field_container">
-                            <input type="text" class="text" name="nom" id="nom" value="" required>
+                            <input type="text" class="text required" name="nom" id="nom" value="" required>
                         </div>
                     </div>
                     <div class="input_container row nolinia">
@@ -61,7 +62,7 @@
                             <label for="cognoms">Cognoms: <span class="required">*</span></label>
                         </div>
                         <div class="field_container">
-                            <input type="text" class="text" name="cognoms" id="cognoms" value="" required>
+                            <input type="text" class="text required" name="cognoms" id="cognoms" value="" required>
                         </div>
                     </div>
                     <div class="input_container row nolinia">
@@ -69,7 +70,57 @@
                             <label for="dni">DNI: <span class="required">*</span></label>
                         </div>
                         <div class="field_container">
-                            <input type="text" class="text" name="dni" id="dni" value="" required>
+                            <input type="text" class="text required" name="dni" id="dni" value="" required>
+                        </div>
+                    </div>
+                    <div class="input_container row nolinia">
+                        <div class="col-3">
+                            <label for="dataini">Entrada: </label>
+                        </div>
+                        <div class="field_container">
+                            <input type="text" class="text" name="dataini" id="dataini" value="">
+                        </div>
+                    </div>
+                    <div class="input_container row nolinia">
+                        <div class="col-3">
+                            <label for="datafi">Sortida: </label>
+                        </div>
+                        <div class="field_container">
+                            <input type="text" class="text" name="datafi" id="datafi" value="">
+                        </div>
+                    </div>
+                    <div class="input_container row nolinia">
+                        <div class="col-3">
+                            <label for="sensorh2o">Id sensor H2O: </label>
+                        </div>
+                        <div class="field_container">
+                            <select name="sensorh2o" id="sensorh2o">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input_container row nolinia">
+                        <div class="col-3">
+                            <label for="h2o">Consum H2O: </label>
+                        </div>
+                        <div class="field_container">
+                            <input type="text" class="text nomodif" name="h2o" id="h2o" value="" disabled>
+                        </div>
+                    </div>
+                    <div class="input_container row nolinia">
+                        <div class="col-3">
+                            <label for="sensorelec">Id sensor Elec: </label>
+                        </div>
+                        <div class="field_container">
+                            <select name="sensorelec" id="sensorelec">
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input_container row nolinia">
+                        <div class="col-3">
+                            <label for="elec">Consum Elèctric: </label>
+                        </div>
+                        <div class="field_container">
+                            <input type="text" class="text nomodif" name="elec" id="elec" value="" disabled>
                         </div>
                     </div>
                 </form>
@@ -81,6 +132,7 @@
     </div>
     
 </body>
+<script type="text/javascript" src="js/moment-with-locales.min.js"></script>
 <script type="text/javascript" src="js/jquery.js"></script>
 <script type="text/javascript" src="js/jquery.knob.min.js"></script>
 <script type="text/javascript" src="js/datatables.min.js"></script>
@@ -90,6 +142,7 @@
 <script type="text/javascript" src="js/wausuaris.js"></script>
 <script type="text/javascript" src="js/modal.js"></script>
 <script type="text/javascript" src="js/jquery.validate.min.js"></script>
+<script type="text/javascript" src="js/jquery.daterangepicker.min.js"></script>
 <script type="text/javascript">
 
 </script>

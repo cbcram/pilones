@@ -16,7 +16,26 @@ $app->get('/h2o/total/status[/{estat}]', function ($request, $response, $args) {
     }
     
     $qry = $this->db->query($strqry);
-    //$data = array('data' => $qry->fetchAll());
+    $qryresult = $qry->fetchAll();
+    
+    // Return json
+    $response = $response->withJson($qryresult,200);
+    return $response;
+
+});
+
+// llistat dels sensors de H2O
+$app->get('/sensorsh2o[/{estat}]', function ($request, $response, $args) {
+    // Sample log message
+    $this->logger->info("Slim-Skeleton '/sensorsh2o' route");
+
+    // Query database
+    $strqry ="SELECT * FROM sensorsh2o";
+    if( isset($args['estat']) ){
+        $strqry ="SELECT * FROM sensorsh2o WHERE estat like '" . $args['estat'] ."'";
+    }
+    
+    $qry = $this->db->query($strqry);
     $qryresult = $qry->fetchAll();
     
     // Return json
@@ -101,6 +120,26 @@ $app->get('/elec/total/status[/{estat}]', function ($request, $response, $args) 
     
     $qry = $this->db->query($strqry);
     //$data = array('data' => $qry->fetchAll());
+    $qryresult = $qry->fetchAll();
+    
+    // Return json
+    $response = $response->withJson($qryresult,200);
+    return $response;
+
+});
+
+// llistat dels sensors de Elec
+$app->get('/sensorselec[/{estat}]', function ($request, $response, $args) {
+    // Sample log message
+    $this->logger->info("Slim-Skeleton '/sensorselec' route");
+
+    // Query database
+    $strqry ="SELECT * FROM sensorselec";
+    if( isset($args['estat']) ){
+        $strqry ="SELECT * FROM sensorselec WHERE estat like '" . $args['estat'] ."'";
+    }
+    
+    $qry = $this->db->query($strqry);
     $qryresult = $qry->fetchAll();
     
     // Return json
@@ -228,6 +267,49 @@ $app->get('/usuaris/actius', function ($request, $response, $args) {
 
 });
 
+// Consum ultima reserva i/o activa
+$app->get('/usuari/consum/{id}', function ($request, $response, $args) {
+    // Sample log message
+    $this->logger->info("Slim-Skeleton '/usuari/consum' route");
+
+    // Query database
+    $strqryh2o =  "SELECT r.id,r.dataini,r.datafi,r.idsensorh2o,SUM(rh.valor) AS h2o " .
+                  "FROM reserves AS r " .
+                  "LEFT JOIN registresh2o AS rh ON r.idsensorh2o=rh.idsensorh2o " .
+                  "WHERE (r.idusuari=" . $args['id'] . ") " .
+                  "AND (rh.datareg BETWEEN r.dataini AND r.datafi) " .
+                  "GROUP BY r.id " .
+                  "ORDER BY r.dataini DESC " .
+                  "LIMIT 1";
+    $strqryelec = "SELECT r.id,r.dataini,r.datafi,r.idsensorelec,SUM(re.valor) AS elec " .
+                  "FROM reserves AS r " .
+                  "LEFT JOIN registreselec AS re ON r.idsensorelec=re.idsensorelec " .
+                  "WHERE (r.idusuari=" . $args['id'] . ") " .
+                  "AND (re.datareg BETWEEN r.dataini AND r.datafi) " .
+                  "GROUP BY r.id " .
+                  "ORDER BY r.dataini DESC " .
+                  "LIMIT 1";
+    $qryh2o = $this->db->query($strqryh2o);
+    $qryelec = $this->db->query($strqryelec);
+    $datah2o = $qryh2o->fetchAll();
+    $dataelec = $qryelec->fetchAll();
+    
+    $datah2o[0]['id'] = (is_numeric($datah2o[0]['id'])) ? $datah2o[0]['id'] : 0;
+    $datah2o[0]['dataini'] = (validateDate($datah2o[0]['dataini'])) ? $datah2o[0]['dataini'] : 0;
+    $datah2o[0]['datafi'] = (validateDate($datah2o[0]['datafi'])) ? $datah2o[0]['datafi'] : 0;
+    $datah2o[0]['idsensorh2o'] = (is_numeric($datah2o[0]['idsensorh2o'])) ? $datah2o[0]['idsensorh2o'] : 0;
+    $datah2o[0]['h2o'] = (is_numeric($datah2o[0]['h2o'])) ? $datah2o[0]['h2o'] : 0;
+    $datah2o[0]['idsensorelec'] = (is_numeric($dataelec[0]['idsensorelec'])) ? $dataelec[0]['idsensorelec'] : 0;
+    $datah2o[0]['elec'] = (is_numeric($dataelec[0]['elec'])) ? $dataelec[0]['elec'] : 0;
+
+    $data = array('data' => $datah2o);
+    
+    // Return json
+    $response = $response->withJson($data,200);
+    return $response;
+
+});
+
 // Llistat reserves, usuari i consums
 $app->get('/usuaris/reserva', function ($request, $response, $args) {
     // Sample log message
@@ -276,7 +358,7 @@ $app->get('/usuaris/reserva', function ($request, $response, $args) {
 
 // Afegir usuari
 $app->post('/usuari[/{id}]', function ($request, $response, $args) {
-    // Sample log message
+    // Log message
     $this->logger->info("Slim-Skeleton '/usuari/{id}:POST' route");
 
     // Extreure dades del Request
@@ -305,9 +387,9 @@ $app->post('/usuari[/{id}]', function ($request, $response, $args) {
 
 });
 
-// Afegir usuari
+// Modificar usuari
 $app->put('/usuari[/{id}]', function ($request, $response, $args) {
-    // Sample log message
+    // Log message
     $this->logger->info("Slim-Skeleton '/usuari/{id}:PUT' route");
 
     // Extreure dades del Request
@@ -316,6 +398,8 @@ $app->put('/usuari[/{id}]', function ($request, $response, $args) {
     $nom = $pars['nom'];
     $cognoms = $pars['cognoms'];
     $dni = $pars['dni'];
+    $dataini = $pars['dataini'];
+    $datafi = $pars['datafi'];
 
     // Modificar a la bdd
     $strqry ="UPDATE usuaris SET nom='" . $nom . "', cognoms='" . $cognoms . "', dni='" . $dni . "' WHERE id=" . $id;
@@ -339,7 +423,7 @@ $app->put('/usuari[/{id}]', function ($request, $response, $args) {
 
 // Eliminar usuari
 $app->delete('/usuari/{id}', function ($request, $response, $args) {
-    // Sample log message
+    // Log message
     $this->logger->info("Slim-Skeleton '/usuari/{id}:DELETE' route");
     // Eliminar de la bdd
     $strqry =" DELETE FROM usuaris WHERE usuaris.id = " . $args['id'];
@@ -436,3 +520,7 @@ function unificar_duplicats($valors) {
     return $retorn;
 }
 
+function validateDate($date, $format = 'Y-m-d H:i:s') {
+    $d = DateTime::createFromFormat($format, $date);
+    return $d && $d->format($format) == $date;
+}

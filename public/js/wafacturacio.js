@@ -9,12 +9,12 @@ $(document).ready(function () {
         columns: [
             { "data": "id", "width": "5%" },
             { "data": "nom", "width": "15%" },
-            { "data": "cognoms", "width": "15%" },
-            { "data": "dni", "width": "5%" },
-            { "data": "dataini", "width": "10%" },
-            { "data": "datafi", "width": "10%" },
-            { "data": "h2o", "width": "10%" },
-            { "data": "elec", "width": "10%" }
+            { "data": "cognoms", "width": "24%" },
+            { "data": "dni", "width": "10%" },
+            { "data": "dataini", "width": "14%" },
+            { "data": "datafi", "width": "14%" },
+            { "data": "h2o", "width": "9%" },
+            { "data": "elec", "width": "9%" }
         ],
         columnDefs: [
             { responsivePriority: 1, targets: 1 },
@@ -25,8 +25,8 @@ $(document).ready(function () {
         select: true,
         buttons: [
             {
-                text: '<i id="btafegirusuari" class="fa fa-user-plus"></i>',
-                titleAttr: 'afegir usuari',
+                text: '<i id="btafegirusuari" class="fa fa-calendar-plus-o"></i>',
+                titleAttr: 'nova reserva',
                 action: function(event) {
                     $('#myModal').show();
                     event.stopPropagation();
@@ -34,8 +34,8 @@ $(document).ready(function () {
                 }
             },
             {
-                text: '<i class="fa fa-user-md"></i>',
-                titleAttr: 'modificar usuari',
+                text: '<i class="fa fa-edit"></i>',
+                titleAttr: 'editar reserva',
                 action: function() {
                     console.log('modificar');
                     var a = taulausuaris.columns().data();
@@ -43,8 +43,8 @@ $(document).ready(function () {
                 }
             },
             {
-                text: '<i class="fa fa-user-times"></i>',
-                titleAttr: 'eliminar usuari/s',
+                text: '<i class="fa fa-calendar-times-o"></i>',
+                titleAttr: 'eliminar reserva',
                 action: function() {
                     if(taulausuaris.rows({ selected: true }).count()>=1) {
                         var idusuari = taulausuaris.rows({ selected: true }).data().toArray()[0]['id'];
@@ -116,7 +116,7 @@ $(document).ready(function () {
     var afegirusuariform = $('#afegirusuariform');
     afegirusuariform.validate();
 
-    $('#afegirusuariguardar').on('click', function() {
+    $('#novareservaguardar').on('click', function() {
         if (afegirusuariform.valid() == true){
             var form_data = $('#afegirusuariform').serialize();
             $.ajax({

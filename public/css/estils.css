@@ -45,3 +45,12 @@ canvas{
     background-color: white;
     color: red;
 }
+
+.container {
+    
+}
+
+.modal {
+    max-height: calc(100vh - 6rem);
+    overflow-y: auto;
+}
