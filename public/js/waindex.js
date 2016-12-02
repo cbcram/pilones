@@ -152,8 +152,10 @@ $(document).ready(function () {
 
     // MAPA
 
+    // crear dades mapa
+
     var mapplic = $('#mapplic').mapplic({
-        source: 'prova.json',
+        source: dadesmapa(),
         sidebar: true,
         minimap: false,
         markers: true,

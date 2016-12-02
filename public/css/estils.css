@@ -54,3 +54,19 @@ canvas{
     max-height: calc(100vh - 6rem);
     overflow-y: auto;
 }
+
+#mapplic {
+    height: calc(80vh) !important;
+}
+
+.ocupat {
+    color: 2424ee !important;
+}
+
+.lliure {
+    color: #44ee44 !important;
+}
+
+.anomalia {
+    color: ee2424 !important;
+}

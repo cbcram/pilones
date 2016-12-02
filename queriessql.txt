@@ -88,3 +88,9 @@ GROUP BY r.id
 ORDER BY r.dataini DESC
 LIMIT 1
 *******************************************************************************
+"SELECT u.id, u.nom, u.cognoms, u.dni, " .
+"(IF ((CURRENT_TIMESTAMP >= MAX(r.dataini)) AND (CURRENT_TIMESTAMP <= MAX(r.datafi)), MAX(r.dataini), '')) AS dataini, " .
+"(IF ((CURRENT_TIMESTAMP >= MAX(r.dataini)) AND (CURRENT_TIMESTAMP <= MAX(r.datafi)), MAX(r.datafi), '')) AS datafi " .
+"FROM usuaris AS u " .
+"LEFT JOIN reserves AS r ON u.id = r.idusuari " .
+"GROUP BY u.id, u.nom "

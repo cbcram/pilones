@@ -1,0 +1,58 @@
+{
+  "mapwidth": "948",
+  "mapheight": "544",
+  "categories": [
+    {
+      "id": "lliure",
+      "title": "Pilona Lliure",
+      "color": "#44ee44",
+      "show" : "true"
+    },
+    {
+      "id": "ocupat",
+      "title": "Pilona Ocupada",
+      "color": "#4444ee",
+      "show": "true"
+    },
+    {
+      "id": "anomalia",
+      "title": "Pilona Averiada",
+      "color": "#ee4444",
+      "show": "true"
+    }
+  ],
+  "levels": [
+    {
+      "id": "camping",
+      "name": "0",
+      "title": "Camping",
+      "map": "images/prova2.2.jpg",
+      "locations": [
+        {
+          "id": "lliure",
+          "title": "Pilona Lliure",
+          "about": "about pilona lliure locations",
+          "description": "description location lliure",
+          "category": "lliure",
+          "link": "http://pilones",
+          "x": "0.4768",
+          "y": "0.7385",
+          "zoom": "3",
+          "pin": "orange"
+        },
+        {
+          "id": "ocupat",
+          "title": "Pilona Ocupada",
+          "about": "about pilona ocupada locations",
+          "description": "description location ocupat",
+          "category": "ocupat",
+          "link": "http://pilones",
+          "x": "0.83",
+          "y": "0.4",
+          "zoom": "3",
+          "pin": "fa fa-user-md"
+        }
+      ]
+    }
+  ]
+}

@@ -224,6 +224,21 @@ $app->get('/sensors/acc/dia[/{mindia}]', function ($request, $response, $args) {
     return $response;
 });
 
+$app->get('/sensors/h2o', function ($request, $response, $args) {
+    // Sample log message
+    $this->logger->info("Slim-Skeleton '/sensors/h2o' route");
+
+    // Query database
+    $strqry = 'SELECT * FROM sensorsh2o ';
+    
+    $qry = $this->db->query($strqry);
+    $qryresult = $qry->fetchAll();
+    
+    // Return json
+    $response = $response->withJson($qryresult,200);
+    return $response;
+});
+
 
 // ******* USUARIS *******
 // Llistat de tots els usuaris
@@ -236,6 +251,13 @@ $app->get('/usuari', function ($request, $response, $args) {
               "FROM usuaris AS u " .
               "LEFT JOIN reserves AS r ON u.id = r.idusuari " .
               "GROUP BY u.id, u.nom";
+    $strqry = "SELECT u.id, u.nom, u.cognoms, u.dni, " .
+              "(IF ((CURRENT_TIMESTAMP >= MAX(r.dataini)) AND (CURRENT_TIMESTAMP <= MAX(r.datafi)), MAX(r.dataini), '')) AS dataini, " .
+              "(IF ((CURRENT_TIMESTAMP >= MAX(r.dataini)) AND (CURRENT_TIMESTAMP <= MAX(r.datafi)), MAX(r.datafi), '')) AS datafi " .
+              "FROM usuaris AS u " .
+              "LEFT JOIN reserves AS r ON u.id = r.idusuari " .
+              "GROUP BY u.id, u.nom " .
+              "ORDER BY dataini ASC";
     
     $qry = $this->db->query($strqry);
     $data = array('data' => $qry->fetchAll());
@@ -289,6 +311,9 @@ $app->get('/usuari/consum/{id}', function ($request, $response, $args) {
                   "GROUP BY r.id " .
                   "ORDER BY r.dataini DESC " .
                   "LIMIT 1";
+
+    $this->logger->info($strqryh2o);
+
     $qryh2o = $this->db->query($strqryh2o);
     $qryelec = $this->db->query($strqryelec);
     $datah2o = $qryh2o->fetchAll();

@@ -7,6 +7,7 @@ $(document).ready(function () {
         autoWidth: false,
         pageLength: 20,
         ajax: "usuari",
+        order: [[ 4, "desc" ]],
         columns: [
             { "data": "id", "width": "5%" },
             { "data": "nom", "width": "15%" },
@@ -117,6 +118,10 @@ $(document).ready(function () {
                             success: function(result) {
                                 $('#h2o').val(result['data'][0]['h2o']);
                                 $('#elec').val(result['data'][0]['elec']);
+                                console.log(result['data'][0]['idsensorh2o']);
+                                console.log(result['data'][0]['idsensorelec']);
+                                $("#idsensorh2o option[value='" + result['data'][0]['idsensorh2o'] + "']").prop('selected',true);
+                                $("#idsensorelec option[value='" + result['data'][0]['idsensorelec'] + "']").prop('selected',true);
                             }
                         });
                         event.stopPropagation();
@@ -219,9 +224,9 @@ $(document).ready(function () {
         success: function(result) {
             $.each(result, function(propietat,valor) {
                 if(valor.estat === "lliure") {
-                    $("#sensorh2o").append($("<option></option>").attr("value",valor.id).text(valor.descripcio));
+                    $("#idsensorh2o").append($("<option></option>").attr("value",valor.id).text(valor.descripcio));
                 } else {
-                    $("#sensorh2o").append($("<option disabled></option>").attr("value",valor.id).text(valor.descripcio).prop('disabled', true));
+                    $("#idsensorh2o").append($("<option disabled></option>").attr("value",valor.id).text(valor.descripcio).prop('disabled', true));
                 }
             });
         }
@@ -233,9 +238,9 @@ $(document).ready(function () {
         success: function(result) {
             $.each(result, function(propietat,valor) {
                 if(valor.estat === "lliure") {
-                    $("#sensorelec").append($("<option></option>").attr("value",valor.id).text(valor.descripcio));
+                    $("#idsensorelec").append($("<option></option>").attr("value",valor.id).text(valor.descripcio));
                 } else {
-                    $("#sensorelec").append($("<option></option>").attr("value",valor.id).text(valor.descripcio).prop('disabled', true));
+                    $("#idsensorelec").append($("<option></option>").attr("value",valor.id).text(valor.descripcio).prop('disabled', true));
                 }
             });
         }
