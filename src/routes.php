@@ -24,6 +24,29 @@ $app->get('/h2o/total/status[/{estat}]', function ($request, $response, $args) {
 
 });
 
+// sensors h2o lliures per un periode
+$app->get('/h2o/lliures/{rini}/{rfi}', function ($request, $response, $args) {
+    // Sample log message
+    $this->logger->info("Slim-Skeleton '/h2o/lliures/{rini}/{rfi}' route");
+
+    // Query database
+    $strqry ="SELECT * " .
+             "FROM sensorsh2o " .
+             "WHERE id NOT IN( " .
+             "    SELECT idsensorh2o " .
+             "    FROM reserves AS r " .
+             "    WHERE '2016-12-19 12:00' BETWEEN r.dataini and r.datafi " .
+             "    OR '2016-12-20 12:00' BETWEEN r.dataini and r.datafi)";
+    
+    $qry = $this->db->query($strqry);
+    $qryresult = $qry->fetchAll();
+    
+    // Return json
+    $response = $response->withJson($qryresult,200);
+    return $response;
+
+});
+
 // llistat dels sensors de H2O
 $app->get('/sensorsh2o[/{estat}]', function ($request, $response, $args) {
     // Sample log message
@@ -464,6 +487,39 @@ $app->delete('/usuari/{id}', function ($request, $response, $args) {
 
 });
 
+// RESERVES
+// Afegir reserva
+$app->post('/reserva', function ($request, $response, $args) {
+    // Log message
+    $this->logger->info("Slim-Skeleton '/reserva:POST' route");
+
+    // Extreure dades del Request
+    $pars = $request->getParsedBody();
+    $dataini = $pars['dataini'];
+    $datafi = $pars['datafi'];
+    $idsensorh2o = $pars['idsensorh2o'];
+    $idsensorelec = $pars['idsensorelec'];
+    $idusuari = $pars['id'];
+
+    // Afegir a la bdd
+    $strqry ="INSERT INTO reserves (id, dataini, datafi, idsensorh2o, idsensorelec, idusuari) VALUES (NULL, '" . $dataini . "', '" . $datafi . "', '" . $idsensorh2o . "', '" . $idsensorelec . "', '" . $idusuari . "')";
+    $this->logger->info($strqry);
+    $qry = $this->db->prepare($strqry);
+    $exqry = array();
+    try {
+        $qryrst = $qry->execute();
+        //array_push($exqry,$strqry);
+        //array_push($exqry,$qryrst);
+        $exqry = $qryrst;
+    } catch (Exception $e) {
+        array_push($exqry,$e);
+        array_push($exqry,$strqry);
+    }
+
+    $response = $response->withJson($exqry,200);
+    return $response;
+
+});
 
 // ******* VISIBLES *******
 // Principal

@@ -94,3 +94,12 @@ LIMIT 1
 "FROM usuaris AS u " .
 "LEFT JOIN reserves AS r ON u.id = r.idusuari " .
 "GROUP BY u.id, u.nom "
+*******************************************************************************
+SELECT id AS idsensorh2o
+FROM sensorsh2o
+WHERE id NOT IN(
+    SELECT idsensorh2o
+    FROM reserves AS r
+    WHERE "2016-12-19 12:00" BETWEEN r.dataini and r.datafi
+    OR "2016-12-20 12:00" BETWEEN r.dataini and r.datafi)
+*******************************************************************************

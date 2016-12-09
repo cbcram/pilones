@@ -193,7 +193,7 @@ $(document).ready(function () {
     $('#afegirusuariguardar').on('click', function() {
         if (afegirusuariform.valid() == true){
             var form_data = $('#afegirusuariform').serialize();
-            var metode = $('#afegirusuariguardar').hasClass('modificar') ? 'put' : 'post';
+            var metode = $('#afegirusuariguardar').hasClass('editar') ? 'put' : 'post';
             //afegir usuari a la bdd
             $.ajax({
                 url: "usuari",
@@ -201,7 +201,6 @@ $(document).ready(function () {
                 type: metode,
                 data: form_data,
                 success: function(result) {
-                    taulausuaris.ajax.reload();
                     if(result!=true) {
                         alert(result[0].errorInfo[2]);
                     }
@@ -209,25 +208,39 @@ $(document).ready(function () {
                 }
             });
             if((moment($('#dataini').val()).isValid()) && (moment($('#datafi').val()).isValid())) {
-                alert('dataini ok');
+                if($('#afegirusuariguardar').hasClass('editar')) {
+                    $.ajax({
+                        url: "reserva",
+                        async: false,
+                        type: 'post',
+                        data: form_data,
+                        success: function(result) {
+                            if(result!=true) {
+                                alert(result[0].errorInfo[2]);
+                            }
+                            console.log('afegir reserva: ' + result);
+                        }
+                    });
+                }
             } else {
-                alert('dataini NOK');
+                // data no ok -> només s'actualitzaran les dades de l'usuari, no pas de la reserva
+                console.log('només actualització dades usuari, no es crea ni modifica reserva');
             }
+            taulausuaris.ajax.reload();
+            $('#myModal').hide();
         }
     });
 
     // Omplir listbox modals d'edicio/modificacio d'usuaris
+    var url = "/h2o/lliures/2016-12-19%2012:00/2016-12-20%2012:00";
     $.ajax({
-        url: "/sensorsh2o",
+        url: url,
         async: false,
         type: 'get',
         success: function(result) {
+            $("#idsensorh2o").append($("<option></option>").attr("value","0").text("--"));
             $.each(result, function(propietat,valor) {
-                if(valor.estat === "lliure") {
                     $("#idsensorh2o").append($("<option></option>").attr("value",valor.id).text(valor.descripcio));
-                } else {
-                    $("#idsensorh2o").append($("<option disabled></option>").attr("value",valor.id).text(valor.descripcio).prop('disabled', true));
-                }
             });
         }
     });
